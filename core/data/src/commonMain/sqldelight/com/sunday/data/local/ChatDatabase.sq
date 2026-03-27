@@ -1,0 +1,88 @@
+import com.sunday.domain.model.ConversationId;
+import com.sunday.domain.model.MessageId;
+import com.sunday.domain.model.MessageStatus;
+import com.sunday.domain.model.ParticipantId;
+import com.sunday.domain.model.ServerId;
+
+-- 1. Participants Table
+-- Stores metadata about users to avoid fetching from network for every message row.
+CREATE TABLE ParticipantEntity (
+    id TEXT AS ParticipantId NOT NULL PRIMARY KEY,
+    displayName TEXT NOT NULL,
+    avatarUrl TEXT,
+    lastSeen INTEGER -- Instant stored as Long
+);
+
+-- 2. Conversations Table
+-- Essential for the "Inbox" view.
+CREATE TABLE ConversationEntity (
+    id TEXT AS ConversationId NOT NULL PRIMARY KEY,
+    peerId TEXT AS ParticipantId NOT NULL, -- The 'other' person in 1-on-1
+    lastMessageSnippet TEXT,               -- Could be encrypted or 'Photo'/'Voice'
+    unreadCount INTEGER NOT NULL DEFAULT 0,
+    updatedAt INTEGER NOT NULL,            -- For sorting the inbox
+    FOREIGN KEY (peerId) REFERENCES ParticipantEntity(id)
+);
+
+-- 3. Messages Table
+-- The core of the app.
+CREATE TABLE MessageEntity (
+    localId TEXT AS MessageId NOT NULL PRIMARY KEY,
+    serverId TEXT AS ServerId,
+    senderId TEXT AS ParticipantId NOT NULL,
+    conversationId TEXT AS ConversationId NOT NULL,
+    encryptedPayload BLOB NOT NULL,
+    nonce BLOB NOT NULL,
+    status TEXT AS MessageStatus NOT NULL,
+    createdAt INTEGER NOT NULL, -- Instant.toEpochMilliseconds()
+    syncedAt INTEGER,           -- Instant.toEpochMilliseconds()
+
+    FOREIGN KEY (conversationId) REFERENCES ConversationEntity(id) ON DELETE CASCADE,
+    FOREIGN KEY (senderId) REFERENCES ParticipantEntity(id)
+);
+
+-- INDEXES: Crucial for a smooth 60fps scrolling experience
+CREATE INDEX IF NOT EXISTS idx_message_conversation ON MessageEntity(conversationId, createdAt DESC);
+CREATE INDEX IF NOT EXISTS idx_conversation_updated ON ConversationEntity(updatedAt DESC);
+
+-- QUERIES --
+
+-- Message Queries
+insertMessage:
+INSERT OR REPLACE INTO MessageEntity(localId, serverId, senderId, conversationId, encryptedPayload, nonce, status, createdAt, syncedAt)
+VALUES ?;
+
+getMessagesForConversation:
+SELECT * FROM MessageEntity
+WHERE conversationId = :conversationId
+ORDER BY createdAt DESC;
+
+getMessageById:
+SELECT * FROM MessageEntity WHERE localId = :id;
+
+getPendingMessages:
+SELECT * FROM MessageEntity WHERE status = 'SENDING';
+
+updateMessageStatus:
+UPDATE MessageEntity
+SET status = :status, serverId = :serverId, syncedAt = :syncedAt
+WHERE localId = :localId;
+
+-- Conversation Queries
+upsertConversation:
+INSERT OR REPLACE INTO ConversationEntity(id, peerId, lastMessageSnippet, unreadCount, updatedAt)
+VALUES ?;
+
+getConversationList:
+SELECT
+    conv.*,
+    part.displayName AS peerName,
+    part.avatarUrl AS peerAvatar
+FROM ConversationEntity AS conv
+JOIN ParticipantEntity AS part ON conv.peerId = part.id
+ORDER BY conv.updatedAt DESC;
+
+-- Participant Queries
+upsertParticipant:
+INSERT OR REPLACE INTO ParticipantEntity(id, displayName, avatarUrl, lastSeen)
+VALUES ?;

@@ -33,3 +33,8 @@ plugins {
 }
 
 include(":composeApp")
+include(":core:domain")
+include(":core:data")
+include(":core:ui-kit")
+//include(":features:chat")
+include(":features:conversation-list")

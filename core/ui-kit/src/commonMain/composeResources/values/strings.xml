@@ -1,0 +1,7 @@
+<resources>
+    <string name="dialog_error_title_label"> Error </string>
+    <string name="error_something_unexpected_label">Something unexpected has happened. Try again!</string>
+    <string name="illustration_error_label">Error illustration</string>
+    <string name="dismiss_label">Dismiss</string>
+    <string name="inbox_title_label">Messages</string>
+</resources>
