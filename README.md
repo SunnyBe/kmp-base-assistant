@@ -3,6 +3,7 @@ Basic Chat App build with KMP and CMP sharing business logic and UI.
 
 This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
 
+```text
 .
 ├── gradle/
 │   └── libs.versions.toml          # Version Catalog
@@ -35,10 +36,11 @@ This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
 │       └── src/commonMain/kotlin/  # Shared Composables (Buttons, TextStyles)
 │
 └── features/                       # UI Modules (One per flow)
-├── chat/
-│   └── src/commonMain/kotlin/  # ChatScreen, ChatViewModel
-└── conversation-list/
-└── src/commonMain/kotlin/  # ListScreen, ListViewModel
+    ├── chat/
+    │   └── src/commonMain/kotlin/  # ChatScreen, ChatViewModel
+    └── conversation-list/
+        └── src/commonMain/kotlin/  # ListScreen, ListViewModel
+```
 
 ### Build and Run Android Application
 

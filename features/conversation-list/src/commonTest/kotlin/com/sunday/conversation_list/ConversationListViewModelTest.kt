@@ -19,6 +19,7 @@ import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
@@ -48,8 +49,8 @@ class ConversationListViewModelTest {
 
     @OptIn(ExperimentalTime::class)
     @Test
-    fun `state has a valid list conversation`() = testScope.runTest {
-        val expectedConversations = fakeConversation.map { conversation ->
+    fun `state has a valid list conversation`() = runTest { // Use runTest directly
+        val expectedConversations = FakeChatRepository.fakeConversations.map { conversation ->
             UIConversation(
                 id = conversation.id.value,
                 preview = conversation.lastMessageSnippet ?: "",
@@ -59,15 +60,22 @@ class ConversationListViewModelTest {
                 participantAvatar = "https://www.gbese.com/cloud"
             )
         }
-        viewModel = ConversationListViewModel(
-            FakeChatRepository(conversations = fakeConversation),
-            FakeDateFormatter()
-        )
 
-        viewModel.state.test {
-            awaitItem() // Initial state(Loading)
-            val state = awaitItem()
-            assertEquals(expectedConversations, state.conversations)
+        // Pass the backgroundScope to the ViewModel if your VM accepts it,
+        // or ensure the repository emits immediately.
+        val repo = FakeChatRepository(conversations = FakeChatRepository.fakeConversations)
+        val vm = ConversationListViewModel(repo, FakeDateFormatter())
+
+        vm.state.test {
+            // Skip the initial loading state if it's already passed,
+            // or wait for the specific data state.
+            val item = awaitItem()
+
+            // If the first item is Loading, wait for the next one
+            val finalState = if (item.isLoading) awaitItem() else item
+
+            assertEquals(expectedConversations, finalState.conversations)
+            assertFalse(finalState.isLoading)
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -122,5 +130,4 @@ internal class FakeChatRepository(
 internal class FakeDateFormatter : DateFormatter {
     @OptIn(ExperimentalTime::class)
     override fun format(instant: Instant): String = instant.toString()
-
 }
