@@ -7,9 +7,13 @@ plugins {
 
 kotlin {
     androidTarget()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+
+    // iOS targets
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    )
 
     sourceSets {
         commonMain.dependencies {
@@ -22,16 +26,26 @@ kotlin {
             implementation(libs.sqldelight.coroutines.extensions)
             implementation(libs.androidx.annotation)
 
+            // Network - Ktor
+            implementation(libs.ktor.client.core)
+
+            // Logging - Kermit
+            implementation(libs.kermit)
+
             implementation(project(":core:domain"))
         }
 
         androidMain.dependencies {
             implementation(libs.koin.android)
             implementation(libs.android.driver)
+
+            implementation(libs.ktor.client.okhttp)
         }
 
         iosMain.dependencies {
             implementation(libs.native.driver)
+
+            implementation(libs.ktor.client.darwin)
         }
 
         commonTest.dependencies {
@@ -39,6 +53,16 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.koin.test)
             implementation(libs.turbine)
+
+            implementation(libs.ktor.client.mock)
+            implementation(libs.sqldelight.sqlite.driver)
+        }
+
+        androidUnitTest.dependencies {
+            implementation(libs.sqlite.driver)
+        }
+        iosTest.dependencies {
+            implementation(libs.sqlite.driver)
         }
     }
 }
@@ -57,29 +81,20 @@ android {
 
     defaultConfig {
         minSdk = 24
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-    add("kspAndroid", libs.koin.ksp.compiler)
-    add("kspIosX64", libs.koin.ksp.compiler)
-    add("kspIosArm64", libs.koin.ksp.compiler)
-    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+    val kspCompiler = libs.koin.ksp.compiler
+    add("kspAndroid", kspCompiler)
+
+    kotlin.targets
+        .filter { it.targetName.startsWith("ios") }
+        .forEach { add("ksp${it.targetName.replaceFirstChar { c -> c.uppercase() }}", kspCompiler) }
 }

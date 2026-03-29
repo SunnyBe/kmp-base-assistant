@@ -10,7 +10,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 @OptIn(ExperimentalTime::class)
-val statusAdapter = object : ColumnAdapter<MessageStatus, String> {
+internal val statusAdapter = object : ColumnAdapter<MessageStatus, String> {
     override fun decode(databaseValue: String): MessageStatus {
         return when (databaseValue) {
             "SENDING" -> MessageStatus.Sending
@@ -33,17 +33,17 @@ val statusAdapter = object : ColumnAdapter<MessageStatus, String> {
     }
 }
 
-val conversationIdAdapter = object : ColumnAdapter<ConversationId, String> {
+internal val conversationIdAdapter = object : ColumnAdapter<ConversationId, String> {
     override fun decode(databaseValue: String) = ConversationId(databaseValue)
     override fun encode(value: ConversationId) = value.value
 }
 
-val localIdAdapter = object : ColumnAdapter<MessageId, String> {
+internal val localIdAdapter = object : ColumnAdapter<MessageId, String> {
     override fun decode(databaseValue: String) = MessageId(databaseValue)
     override fun encode(value: MessageId) = value.value
 }
 
-val serverIdAdapter = object : ColumnAdapter<ServerId, String> {
+internal val serverIdAdapter = object : ColumnAdapter<ServerId, String> {
     override fun decode(databaseValue: String) = ServerId(databaseValue)
     override fun encode(value: ServerId) = value.value
 }

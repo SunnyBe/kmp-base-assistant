@@ -79,7 +79,7 @@ SELECT
     part.displayName AS peerName,
     part.avatarUrl AS peerAvatar
 FROM ConversationEntity AS conv
-JOIN ParticipantEntity AS part ON conv.peerId = part.id
+LEFT JOIN ParticipantEntity AS part ON conv.peerId = part.id
 ORDER BY conv.updatedAt DESC;
 
 -- Participant Queries

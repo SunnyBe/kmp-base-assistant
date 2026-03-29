@@ -27,6 +27,6 @@ internal fun GetConversationList.toDomain() = Conversation(
     lastMessageSnippet = lastMessageSnippet,
     unreadCount = unreadCount,
     updatedAt = Instant.fromEpochMilliseconds(updatedAt),
-    participantName = peerName,
+    participantName = peerName ?: "",
     participantAvatar = peerAvatar
 )

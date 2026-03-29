@@ -9,9 +9,11 @@ plugins {
 
 kotlin {
     androidTarget()
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    )
 
     sourceSets {
         commonMain.dependencies {
@@ -78,26 +80,18 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     debugImplementation(compose.uiTooling)
 
-    add("kspAndroid", libs.koin.ksp.compiler)
-    add("kspIosX64", libs.koin.ksp.compiler)
-    add("kspIosArm64", libs.koin.ksp.compiler)
-    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+    val kspCompiler = libs.koin.ksp.compiler
+    add("kspAndroid", kspCompiler)
+    kotlin.targets
+        .filter { it.targetName.startsWith("os") }
+        .forEach { add("ksp${it.targetName.replaceFirstChar { c -> c.uppercase() }}", kspCompiler) }
 }

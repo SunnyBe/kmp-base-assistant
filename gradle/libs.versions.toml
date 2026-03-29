@@ -14,6 +14,7 @@ composeHotReload = "1.0.0"
 composeMultiplatform = "1.9.3"
 coroutinesExtensions = "2.2.1"
 junit = "4.13.2"
+kermit = "2.1.0"
 kotlin = "2.2.21"
 kotlinx-coroutines = "1.10.2"
 nativeDriver = "2.2.1"
@@ -21,12 +22,15 @@ sqldelight = "2.2.1"
 koin = "4.1.1"
 koinAnnotation = "2.3.1"
 ksp = "2.2.21-2.0.4"
+ktor = "3.4.1"
+sqliteDriver = "1.5.5"
 turbine = "1.2.1"
 material = "1.10.0"
 
 [libraries]
 android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "nativeDriver" }
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "annotation" }
+kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
@@ -40,8 +44,10 @@ androidx-lifecycle-viewmodelCompose = { module = "org.jetbrains.androidx.lifecyc
 androidx-lifecycle-runtimeCompose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutinesSwing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "nativeDriver" }
 sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "coroutinesExtensions" }
+sqldelight-sqlite-driver = { module = "com.squareup.sqldelight:sqlite-driver", version.ref = "sqliteDriver" }
 sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "nativeDriver" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-test = { module = "io.insert-koin:koin-test", version.ref = "koin" }
@@ -52,6 +58,9 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 koin-annotations = { module = "io.insert-koin:koin-annotations", version.ref = "koinAnnotation" }
 koin-ksp-compiler = { module = "io.insert-koin:koin-ksp-compiler", version.ref = "koinAnnotation" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel", version.ref = "koin" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]

@@ -51,7 +51,9 @@ class ChatRepositoryImpl(
     }
 
     override fun streamConversations(): Flow<List<Conversation>> {
-        return queries.getConversationList().asFlow().mapToList(ioDispatcher)
+        return queries.getConversationList()
+            .asFlow()
+            .mapToList(ioDispatcher)
             .map { conversations -> conversations.map { it.toDomain() } }
     }
 
